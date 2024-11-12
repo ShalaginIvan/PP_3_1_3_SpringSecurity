@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>List of users</title>
+  <style>
+    table {
+      width: 50%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+<h2>List of users</h2>
+
+<form th:action="@{/logout}" th:method="POST">
+  <input type="submit" value="Logout" />
+</form>
+
+<br/>
+<hr/>
+<!-- Ссылка на страницу добавления нового пользователя /users/new -->
+<a th:href="@{/admin/users/new}" th:text="EnterNewUser">EnterNewUser</a>
+
+<table>
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>FirstName</th>
+    <th>LastName</th>
+    <th>Email</th>
+    <th>Roles</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- Итерация по списку users с использованием Thymeleaf -->
+  <tr th:each="user : ${users}">
+    <!-- Поле id как ссылка на страницу /user?id=...... -->
+    <td>
+      <a th:href="@{/admin/user?id={id}(id=${user.id})}" th:text="${user.id}">Id</a>
+    </td>
+    <td th:text="${user.firstName}">FirstName</td>
+    <td th:text="${user.lastName}">LastName</td>
+    <td th:text="${user.email}">Email</td>
+    <td>
+         <ul>
+              <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+         </ul>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User Page</title>
+  <style>
+    table {
+      width: 50%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+<h2>User Page</h2>
+
+<table>
+  <thead>
+  <tr>
+    <th>Id</th>
+    <th>FirstName</th>
+    <th>LastName</th>
+    <th>Email</th>
+  </tr>
+  </thead>
+  <tbody>
+
+  <td th:text="${user.id}">Id</td>
+  <td th:text="${user.firstName}">FirstName</td>
+  <td th:text="${user.lastName}">LastName</td>
+  <td th:text="${user.email}">Email</td>
+
+  </tr>
+  </tbody>
+</table>
+
+<h2> </h2>
+<h2> </h2>
+
+<form th:action="@{/logout}" th:method="POST">
+  <input type="submit" value="Logout" />
+</form>
+
+</body>
+</html>

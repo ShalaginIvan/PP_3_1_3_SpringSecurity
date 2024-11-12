@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h2>User</h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>FirstName</th>
+        <th>LastName</th>
+        <th>Email</th>
+        <th>Roles</th>
+    </tr>
+    </thead>
+    <tbody>
+
+        <td th:text="${user.id}">Id</td>
+        <td th:text="${user.firstName}">FirstName</td>
+        <td th:text="${user.lastName}">LastName</td>
+        <td th:text="${user.email}">Email</td>
+        <td>
+            <ul>
+                <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+            </ul>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+<h2> </h2>
+<h2> </h2>
+
+<!-- Ссылка на страницу редактирования данных пользователя /users/edit?id=... -->
+<a th:href="@{/admin/user/edit(id=${user.id})}" th:text="EditUser">EditUser</a>
+<h2> </h2>
+<h2> </h2>
+
+<!-- Ссылка на страницу удаления пользователя /users/delete?id=... -->
+<form th:method="POST" th:action="@{/admin/user/delete(id=${user.id})}" >
+        <input type="submit" value="Delete!" />
+</form>
+
+<br/>
+<hr/>
+<!-- Ссылка на страницу списка всех пользователей /users -->
+<a th:href="@{/admin/users}" th:text="UsersList">UsersList</a>
+
+<h2> </h2>
+<h2> </h2>
+
+<form th:action="@{/logout}" th:method="POST">
+    <input type="submit" value="Logout" />
+</form>
+
+</body>
+</html>

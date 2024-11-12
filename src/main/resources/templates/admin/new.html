@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create new user or admin</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<h2>Create new user or admin</h2>
+<form th:method="POST" th:action="@{/admin/users}" th:object="${user}">
+    <div>
+        <label for="username">FirstName: </label>
+        <input type="text" th:field="*{firstName}" id="username"/>
+        <div style="color:red" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}">FirstName error</div>
+        <br/>
+        <label for="lastName">LastName: </label>
+        <input type="text" th:field="*{lastName}" id="lastName"/>
+        <div style="color:red" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">LastName error</div>
+        <br/>
+        <label for="email">Email: </label>
+        <input type="text" th:field="*{email}" id="email"/>
+        <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
+        <br/>
+        <label for="password">Password: </label>
+        <input type="password" th:field="*{password}" id="password"/>
+        <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+        <br/>
+
+        <label for="passwordConfirm">Confirm password: </label>
+        <input type="text" th:field="*{passwordConfirm}" id="passwordConfirm"/>
+        <div style="color:red" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}">PasswordConfirm Error</div>
+        <br/>
+
+        <label>Roles:</label><br/>
+        <div th:each="role : ${roles}">
+            <input type="checkbox" th:field="*{roles}" th:value="${role.id}" th:id="${'role-' + role.id}"/>
+            <label th:for="${'role-' + role.id}" th:text="${role.name}"></label>
+            <br/>
+        </div>
+        <div style="color:red" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}">Please select at least one role.</div>
+
+        <input type="submit" value="Sign up!"/>
+    </div>
+</form>
+
+<h2> </h2>
+<h2> </h2>
+<!-- Ссылка на страницу списка всех пользователей /users -->
+<a th:href="@{/admin/users}" th:text="UsersList">UsersList</a>
+
+<h2> </h2>
+<h2> </h2>
+<form th:action="@{/logout}" th:method="POST">
+    <input type="submit" value="Logout" />
+</form>
+
+</body>
+</html>
