@@ -1,24 +1,24 @@
 package springcource.PP_3_1_3_SpringSecurity.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springcource.PP_3_1_3_SpringSecurity.dao.UserDao;
 import springcource.PP_3_1_3_SpringSecurity.model.User;
 import springcource.PP_3_1_3_SpringSecurity.repositories.UserRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-
+    @PersistenceContext
+    private EntityManager entityManager;
     private final UserRepository userRepository;
-    private final UserDao userDao;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -26,18 +26,18 @@ public class UserService implements UserDetailsService {
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
-
         return user.get();
     }
 
     @Transactional
     public User getById(Long id) {
-        return userDao.getById(id);
+        Optional<User> userFromDb = userRepository.findById(id);
+        return userFromDb.orElse(new User());
     }
 
     @Transactional(readOnly = true)
     public List<User> getAll() {
-        return userDao.getAll();
+        return userRepository.findAll();
     }
 
     @Transactional
@@ -46,22 +46,26 @@ public class UserService implements UserDetailsService {
         if (!userFromBD.isEmpty()) {
             return false;
         }
-        userDao.save(user);
+        userRepository.save(user);
         return true;
     }
 
     @Transactional
     public void update(User user) {
-        userDao.update(user);
+        entityManager.merge(user);
     }
 
     @Transactional
     public void delete(Long id) {
-        userDao.delete(id);
+        entityManager.createQuery("delete from User where id=:id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 
     @Transactional
-    public void initDataBaseForTest() {
-        userDao.initDataBaseForTest();
+    public Long getCountUsers() {
+        return (Long) entityManager.createQuery("SELECT COUNT(u) FROM User u")
+                .getSingleResult();
     }
+
 }

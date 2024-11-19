@@ -2,17 +2,15 @@ package springcource.PP_3_1_3_SpringSecurity.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import springcource.PP_3_1_3_SpringSecurity.model.User;
-import springcource.PP_3_1_3_SpringSecurity.repositories.RoleRepository;
+import springcource.PP_3_1_3_SpringSecurity.services.RoleService;
 import springcource.PP_3_1_3_SpringSecurity.services.UserService;
-
-import java.util.Set;
-
 
 @Controller
 @RequestMapping("/admin")
@@ -20,7 +18,9 @@ import java.util.Set;
 public class AdminController {
     private final UserService userService;
 
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/users")
     public String getUsersList(ModelMap model) {
@@ -37,7 +37,7 @@ public class AdminController {
     @GetMapping("/users/new")
     public String newUser(ModelMap model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+        model.addAttribute("roles", roleService.getAllRoles());
         return "/admin/new";
     }
 
@@ -46,28 +46,30 @@ public class AdminController {
 
         // проверяем ошибки заполнения полей User-а
         if (result.hasErrors()) {
-            model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+            model.addAttribute("roles", roleService.getAllRoles());
             return "/admin/new";
         }
 
         // Проверяем, что выбрана хотя бы одна роль
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             result.rejectValue("roles", "error.user", "Please select at least one role.");
-            model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+            model.addAttribute("roles", roleService.getAllRoles());
             return "/admin/new";
         }
 
         // Проверяем Password and Confirm_Password
         if (!user.getPassword().equals(user.getPasswordConfirm())) {
             result.rejectValue("passwordConfirm", "error.user", "Password and Confirm_Password do not match");
-            model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+            model.addAttribute("roles", roleService.getAllRoles());
             return "/admin/new";
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // Сохраняем пользователя с проверкой уникальности
         if (!userService.save(user)) {
             result.rejectValue("firstName", "error.user", "User with that name already exists");
-            model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+            model.addAttribute("roles", roleService.getAllRoles());
             return "/admin/new";
         }
 
@@ -78,7 +80,7 @@ public class AdminController {
     public String edit(@RequestParam("id") Long id, ModelMap model) {
 
         model.addAttribute("user", userService.getById(id));
-        model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+        model.addAttribute("roles", roleService.getAllRoles());
         return "/admin/edit";
     }
 
@@ -87,23 +89,25 @@ public class AdminController {
 
         // проверяем ошибки заполнения полей User-а
         if (result.hasErrors()) {
-            model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+            model.addAttribute("roles", roleService.getAllRoles());
             return "/admin/edit";
         }
 
         // Проверяем, что выбрана хотя бы одна роль
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             result.rejectValue("roles", "error.user", "Please select at least one role.");
-            model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+            model.addAttribute("roles", roleService.getAllRoles());
             return "/admin/edit";
         }
 
         // Проверяем Password and Confirm_Password
         if (!user.getPassword().equals(user.getPasswordConfirm())) {
             result.rejectValue("passwordConfirm", "error.user", "Password and Confirm_Password do not match");
-            model.addAttribute("roles", roleRepository.findAllByNameIn(Set.of("ROLE_USER", "ROLE_ADMIN")).get());
+            model.addAttribute("roles", roleService.getAllRoles());
             return "/admin/edit";
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // Сохраняем пользователя без проверки уникальности (имя может остаться прежним)
         userService.update(user);
