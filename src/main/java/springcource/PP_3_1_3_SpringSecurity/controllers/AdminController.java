@@ -22,12 +22,6 @@ public class AdminController {
 
     private final PasswordEncoder passwordEncoder;
 
-    @GetMapping("/users")
-    public String getUsersList(ModelMap model) {
-        model.addAttribute("users", userService.getAll());
-        return "/admin/usersList";
-    }
-
     @GetMapping("/user")
     public String getUserById(@RequestParam("id") Long id, ModelMap model) {
         model.addAttribute("user", userService.getById(id));
@@ -73,7 +67,7 @@ public class AdminController {
             return "/admin/new";
         }
 
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     @GetMapping("/user/edit")
@@ -112,14 +106,14 @@ public class AdminController {
         // Сохраняем пользователя без проверки уникальности (имя может остаться прежним)
         userService.update(user);
 
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
     @PostMapping("/user/delete")
     public String delete(@RequestParam("id") Long id) {
 
         userService.delete(id);
-        return "redirect:/admin/users";
+        return "redirect:/admin";
     }
 
 }

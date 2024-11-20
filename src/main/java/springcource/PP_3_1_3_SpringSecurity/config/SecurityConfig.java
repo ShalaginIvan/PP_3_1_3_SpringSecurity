@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import springcource.PP_3_1_3_SpringSecurity.model.User;
 import springcource.PP_3_1_3_SpringSecurity.services.UserService;
 
 import java.io.IOException;
@@ -69,12 +68,9 @@ public class SecurityConfig {
                 var authorities = authentication.getAuthorities();
                 String redirectUrl = "/hello"; // Значение по умолчанию
                 if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                    redirectUrl = "/admin/users";
+                    redirectUrl = "/admin";
                 } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
-                    // Извлекаем id текущего пользователя
-                    User user = (User) authentication.getPrincipal();
-                    redirectUrl = "/user?id=" + user.getId();
-
+                    redirectUrl = "/user";
                 }
                 response.sendRedirect(redirectUrl);
             }
