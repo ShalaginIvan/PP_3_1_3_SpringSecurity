@@ -5,6 +5,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import springcource.PP_3_1_3_SpringSecurity.model.Role;
 import springcource.PP_3_1_3_SpringSecurity.model.User;
 import springcource.PP_3_1_3_SpringSecurity.services.RoleService;
 import springcource.PP_3_1_3_SpringSecurity.services.UserService;
@@ -31,23 +32,24 @@ public class RunAfterStartup {
             // если база пуста, то создаем для теста базу из 4 пользователей и таблицу ролей
 
             // создаем роли
-            roleService.createRoles();
+            Role roleAdmin = roleService.getOrCreate( "ROLE_ADMIN");
+            Role roleUser = roleService.getOrCreate("ROLE_USER");
 
-            // админ
+            // admin/user
             User user1 = new User("Рустам", "Башаев", "kata@mail.ru", "1234");
-            user1.setRoles(new HashSet<>(Arrays.asList(roleService.getRoleAdmin(), roleService.getRoleUser())));
+            user1.setRoles(new HashSet<>(Arrays.asList(roleAdmin, roleUser)));
 
             // user
             User user2 = new User("Mike", "Tyson", "mikeTyson@gmail.ru", "1234");
-            user2.setRoles(Collections.singleton(roleService.getRoleUser()));
+            user2.setRoles(Collections.singleton(roleUser));
 
-            // админ
+            // admin/user
             User user3 = new User("Jon", "Smith", "smith@list.ru", "1234");
-            user3.setRoles(new HashSet<>(Arrays.asList(roleService.getRoleAdmin(), roleService.getRoleUser())));
+            user3.setRoles(new HashSet<>(Arrays.asList(roleAdmin, roleUser)));
 
-            // user
-            User user4 = new User("Олег", "Иванов", "олег-иванов@почта.ru", "1234");
-            user4.setRoles(Collections.singleton(roleService.getRoleUser()));
+            // admin
+            User user4 = new User("Олег", "Иванов", "oleg-ivanov@gmail.com", "1234");
+            user4.setRoles(Collections.singleton(roleAdmin));
 
             user1.setPassword(passwordEncoder.encode(user1.getPassword()));
             userService.save(user1);

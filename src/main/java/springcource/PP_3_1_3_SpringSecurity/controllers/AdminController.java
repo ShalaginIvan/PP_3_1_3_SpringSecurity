@@ -31,7 +31,7 @@ public class AdminController {
     @GetMapping("/users/new")
     public String newUser(ModelMap model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleService.getAllRoles());
+        model.addAttribute("roles", roleService.getAll());
         return "/admin/new";
     }
 
@@ -40,21 +40,21 @@ public class AdminController {
 
         // проверяем ошибки заполнения полей User-а
         if (result.hasErrors()) {
-            model.addAttribute("roles", roleService.getAllRoles());
+            model.addAttribute("roles", roleService.getAll());
             return "/admin/new";
         }
 
         // Проверяем, что выбрана хотя бы одна роль
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             result.rejectValue("roles", "error.user", "Please select at least one role.");
-            model.addAttribute("roles", roleService.getAllRoles());
+            model.addAttribute("roles", roleService.getAll());
             return "/admin/new";
         }
 
         // Проверяем Password and Confirm_Password
         if (!user.getPassword().equals(user.getPasswordConfirm())) {
             result.rejectValue("passwordConfirm", "error.user", "Password and Confirm_Password do not match");
-            model.addAttribute("roles", roleService.getAllRoles());
+            model.addAttribute("roles", roleService.getAll());
             return "/admin/new";
         }
 
@@ -63,7 +63,7 @@ public class AdminController {
         // Сохраняем пользователя с проверкой уникальности
         if (!userService.save(user)) {
             result.rejectValue("firstName", "error.user", "User with that name already exists");
-            model.addAttribute("roles", roleService.getAllRoles());
+            model.addAttribute("roles", roleService.getAll());
             return "/admin/new";
         }
 
@@ -74,7 +74,7 @@ public class AdminController {
     public String edit(@RequestParam("id") Long id, ModelMap model) {
 
         model.addAttribute("user", userService.getById(id));
-        model.addAttribute("roles", roleService.getAllRoles());
+        model.addAttribute("roles", roleService.getAll());
         return "/admin/edit";
     }
 
@@ -83,21 +83,21 @@ public class AdminController {
 
         // проверяем ошибки заполнения полей User-а
         if (result.hasErrors()) {
-            model.addAttribute("roles", roleService.getAllRoles());
+            model.addAttribute("roles", roleService.getAll());
             return "/admin/edit";
         }
 
         // Проверяем, что выбрана хотя бы одна роль
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             result.rejectValue("roles", "error.user", "Please select at least one role.");
-            model.addAttribute("roles", roleService.getAllRoles());
+            model.addAttribute("roles", roleService.getAll());
             return "/admin/edit";
         }
 
         // Проверяем Password and Confirm_Password
         if (!user.getPassword().equals(user.getPasswordConfirm())) {
             result.rejectValue("passwordConfirm", "error.user", "Password and Confirm_Password do not match");
-            model.addAttribute("roles", roleService.getAllRoles());
+            model.addAttribute("roles", roleService.getAll());
             return "/admin/edit";
         }
 
