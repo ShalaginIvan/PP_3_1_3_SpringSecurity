@@ -5,7 +5,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import springcource.PP_3_1_3_SpringSecurity.model.Role;
 import springcource.PP_3_1_3_SpringSecurity.model.User;
 import springcource.PP_3_1_3_SpringSecurity.services.RoleService;
 import springcource.PP_3_1_3_SpringSecurity.services.UserService;
@@ -32,24 +31,24 @@ public class RunAfterStartup {
             // если база пуста, то создаем для теста базу из 4 пользователей и таблицу ролей
 
             // создаем роли
-            Role roleAdmin = roleService.getOrCreate( "ROLE_ADMIN");
-            Role roleUser = roleService.getOrCreate("ROLE_USER");
+            roleService.create("ROLE_ADMIN");
+            roleService.create("ROLE_USER");
 
             // admin/user
             User user1 = new User("Рустам", "Башаев", "kata@mail.ru", "1234");
-            user1.setRoles(new HashSet<>(Arrays.asList(roleAdmin, roleUser)));
+            user1.setRoles(new HashSet<>(Arrays.asList(roleService.get("ROLE_ADMIN"), roleService.get("ROLE_USER"))));
 
             // user
             User user2 = new User("Mike", "Tyson", "mikeTyson@gmail.ru", "1234");
-            user2.setRoles(Collections.singleton(roleUser));
+            user2.setRoles(Collections.singleton(roleService.get("ROLE_USER")));
 
             // admin/user
             User user3 = new User("Jon", "Smith", "smith@list.ru", "1234");
-            user3.setRoles(new HashSet<>(Arrays.asList(roleAdmin, roleUser)));
+            user3.setRoles(new HashSet<>(Arrays.asList(roleService.get("ROLE_ADMIN"), roleService.get("ROLE_USER"))));
 
             // admin
             User user4 = new User("Олег", "Иванов", "oleg-ivanov@gmail.com", "1234");
-            user4.setRoles(Collections.singleton(roleAdmin));
+            user4.setRoles(Collections.singleton(roleService.get("ROLE_ADMIN")));
 
             user1.setPassword(passwordEncoder.encode(user1.getPassword()));
             userService.save(user1);

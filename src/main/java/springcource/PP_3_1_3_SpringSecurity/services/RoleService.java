@@ -6,7 +6,7 @@ import springcource.PP_3_1_3_SpringSecurity.model.Role;
 import springcource.PP_3_1_3_SpringSecurity.repositories.RoleRepository;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -15,16 +15,20 @@ public class RoleService {
     private final RoleRepository roleRepository;
 
     public Set<Role> getAll() {
-        List<Role> list = roleRepository.findAll();
-        Set<Role> roles = new HashSet<>();
-        roles.addAll(list);
-        return roles;
+        return new HashSet<>(roleRepository.findAll());
     }
 
-    // метод создания новой роли (если такая роль уже есть, то ее возвращаем)
-    public Role getOrCreate(String roleName) {
+    public Role get(String roleName) {
         return roleRepository.findByName(roleName)
-                .orElseGet(() -> roleRepository.save(new Role(roleName)));
+                .orElseThrow(() -> new RuntimeException("Роль " + roleName + " не найдена!"));
+    }
+    public boolean create(String roleName) {
+        Optional<Role> roleFromBD = roleRepository.findByName(roleName);
+        if (!roleFromBD.isEmpty()) {
+            return false;
+        }
+        roleRepository.save(new Role(roleName));
+        return true;
     }
 
 }

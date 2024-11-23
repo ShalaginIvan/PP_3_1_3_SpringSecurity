@@ -48,7 +48,7 @@ public class AuthController {
         }
 
         // при регистрации даем роль -  ROLE_USER
-        user.setRoles(Collections.singleton(roleService.getOrCreate("ROLE_USER")));
+        user.setRoles(Collections.singleton(roleService.get("ROLE_USER")));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         if (!userService.save(user)){
