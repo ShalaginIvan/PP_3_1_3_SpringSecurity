@@ -28,6 +28,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login", "/auth/registration", "/error").permitAll()
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Ограничение доступа к /admin !
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
